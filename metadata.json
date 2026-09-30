@@ -1,0 +1,6 @@
+{
+  "name": "HisabKitab BD – ফিন্যান্স, ইউটিলিটি ক্যালকুলেটর ও গাইড হাব",
+  "description": "বাংলাদেশের প্রতিদিনের জরুরি হিসাব—বিকাশ/নগদ চার্জ, স্বর্ণের দাম ও যাকাত, জমি পরিমাপ, ব্যাংক লোন ইএমআই, বিদ্যুৎ বিল ক্যালকুলেটর এবং ফিন্যান্সিয়াল গাইড পোর্টাল।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
