@@ -27,55 +27,74 @@ interface AdSlotProps {
 export const AdSenseSlot: React.FC<AdSlotProps> = ({
   slotName,
   format,
-  publisherId,
   showPreview,
   lang,
 }) => {
-  if (!showPreview) return null;
+  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
 
-  const heightClass =
-    format === 'horizontal'
-      ? 'min-h-[90px]'
-      : format === 'rectangle'
-      ? 'min-h-[220px] sm:min-h-[250px]'
-      : 'min-h-[110px]';
+  React.useEffect(() => {
+    if (!showPreview || !iframeRef.current) return;
+    const iframe = iframeRef.current;
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+
+    const adHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'c0908d1108918847da860e37fb3b6653',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highrevenueformat.com/c0908d1108918847da860e37fb3b6653/invoke.js"></script>
+  </body>
+</html>`;
+
+    doc.open();
+    doc.write(adHtml);
+    doc.close();
+  }, [showPreview, slotName, format]);
+
+  if (!showPreview) return null;
 
   return (
     <div
-      className="my-6 no-print"
+      className="my-5 no-print"
       aria-label={lang === 'bn' ? 'বিজ্ঞাপন স্থান' : 'Advertisement Slot'}
     >
-      <div className="text-[11px] text-slate-500 mb-1 flex flex-wrap items-center justify-between gap-2">
-        <span>
-          {lang === 'bn'
-            ? 'বিজ্ঞাপন · Google AdSense স্পনসরড স্লট'
-            : 'Advertisement · Google AdSense Slot'}
-        </span>
-        <span className="font-mono-tabular truncate max-w-full">
-          {publisherId ? publisherId : 'ca-pub-XXXXXXXXXXXXXXXX'} · {slotName}
-        </span>
+      <div className="text-[10px] text-slate-400 mb-1 flex items-center justify-between">
+        <span>{lang === 'bn' ? 'স্পনসরড বিজ্ঞাপন' : 'Sponsored Advertisement'}</span>
+        <span className="font-mono-tabular">{slotName}</span>
       </div>
-      <div
-        className={`w-full ${heightClass} bg-slate-100/80 border border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center`}
-      >
-        <p className="text-xs sm:text-sm font-semibold text-slate-700">
-          {format === 'horizontal'
-            ? lang === 'bn'
-              ? 'রেসপনসিভ লিডারবোর্ড বিজ্ঞাপন (৭২৮×৯০ / অটো-রেসপনসিভ)'
-              : 'Responsive Leaderboard Ad Unit (728×90 / Auto)'
-            : format === 'rectangle'
-            ? lang === 'bn'
-              ? 'সাইডবার ডিসপ্লে বিজ্ঞাপন (৩০০×২৫০ হাই-সিপিসি ফিন্যান্স ইউনিট)'
-              : 'Sidebar Display Ad Unit (300×250 High-CPC Finance)'
-            : lang === 'bn'
-            ? 'ইন-আর্টিকেল নেটিভ বিজ্ঞাপন (রেসপনসিভ)'
-            : 'In-Article Native Responsive Ad Unit'}
-        </p>
-        <p className="text-xs text-slate-500 mt-1 max-w-lg">
-          {lang === 'bn'
-            ? 'Google AdSense অনুমোদনের পর এখানে স্বয়ংক্রিয়ভাবে ব্যাংকিং, ইন্স্যুরেন্স ও ফিন্যান্স ক্যাটাগরির উচ্চ সিপিসি বিজ্ঞাপন প্রদর্শিত হবে।'
-            : 'Once approved by Google AdSense, high-CPC financial, banking, and consumer ads render automatically in this container.'}
-        </p>
+      <div className="w-full min-h-[96px] bg-white border border-slate-200/80 rounded-lg py-1.5 px-2 flex items-center justify-center overflow-x-auto">
+        <iframe
+          ref={iframeRef}
+          title={`ad-${slotName}`}
+          width="728"
+          height="90"
+          scrolling="no"
+          frameBorder="0"
+          className="max-w-full border-0 overflow-hidden"
+        />
       </div>
     </div>
   );
